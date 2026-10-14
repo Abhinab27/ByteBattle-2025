@@ -34,6 +34,17 @@ export default function TeamsPage() {
     }
   }
 
+  const clearAssessmentStateForTeam = (teamId) => {
+    const keysToRemove = [
+      `assessmentStarted_${teamId}`,
+      `assessmentStartTime_${teamId}`,
+      "assessmentStarted",
+      "assessmentStartTime",
+    ];
+
+    keysToRemove.forEach((key) => localStorage.removeItem(key));
+  };
+
   const handleDeleteTeam = async (team) => {
     const confirmed = window.confirm(
       `⚠️ REMOVE TEAM: "${team.teamName}"?\n\n` +
@@ -46,6 +57,7 @@ export default function TeamsPage() {
 
     setDeletingId(team._id);
     try {
+      clearAssessmentStateForTeam(team._id);
       await deleteTeam({ teamId: team._id });
       setNotice(`Team "${team.teamName}" removed successfully. They can now re-register and retake Round 1.`);
       setTimeout(() => setNotice(""), 6000);
