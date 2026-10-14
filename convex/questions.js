@@ -352,18 +352,19 @@ export const evaluateRound1 = mutation({
   },
   handler: async (ctx, { teamId, answers }) => {
     const questions = await ctx.db.query("questions").collect();
+    const normalize = (value) => String(value ?? "").trim().toLowerCase();
     const qMap = new Map();
     for (const q of questions) {
-      qMap.set(q._id.toString(), q.answer);
+      qMap.set(q._id.toString(), normalize(q.answer));
     }
 
     let correctCount = 0;
     const answerEntries = Object.entries(answers ?? {});
-    const totalAttempted = answerEntries.length;
 
     for (const [qId, selectedAns] of answerEntries) {
       const realAns = qMap.get(qId);
-      if (realAns && realAns === selectedAns) {
+      const normalizedSelected = normalize(selectedAns);
+      if (realAns && realAns === normalizedSelected) {
         correctCount++;
       }
     }

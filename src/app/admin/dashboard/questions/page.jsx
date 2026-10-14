@@ -59,30 +59,31 @@ export default function AdminQuestionsPage() {
   const handleSave = async (e) => {
     e.preventDefault();
     if (!formText.trim()) return;
-    if (options.some((opt) => !opt.trim())) {
+    const cleanedOptions = options.map((opt) => opt.trim());
+    if (cleanedOptions.some((opt) => !opt)) {
       alert("Please provide all 4 options.");
       return;
     }
 
-    const answer = options[selectedAnswerIndex];
+    const answer = cleanedOptions[selectedAnswerIndex];
     setIsSubmitting(true);
 
     try {
       if (editingId) {
         await updateQuestion({
           id: editingId,
-          text: formText,
-          options,
+          text: formText.trim(),
+          options: cleanedOptions,
           answer,
-          category: formCategory,
+          category: formCategory.trim() || "General",
         });
         setMessage("Question updated successfully!");
       } else {
         await addQuestion({
-          text: formText,
-          options,
+          text: formText.trim(),
+          options: cleanedOptions,
           answer,
-          category: formCategory,
+          category: formCategory.trim() || "General",
           qid: (questions?.length || 0) + 1,
         });
         setMessage("New question created successfully!");
