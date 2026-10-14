@@ -20,8 +20,8 @@ export async function GET() {
     // Shuffle order per participant
     const randomized = shuffleArray([...questions]);
 
-    // Remove correct answers before sending to frontend
-    const safeQuestions = randomized.map(({ answer, ...rest }) => rest);
+    // Select 20 random questions and remove correct answers before sending
+    const safeQuestions = randomized.slice(0, 20).map(({ answer, ...rest }) => rest);
 
     return NextResponse.json({ questions: safeQuestions });
   } catch (err) {

@@ -3,8 +3,8 @@
 import { GridBackground } from "@/app/components/ui/grid-background";
 import { Grid } from "lucide-react";
 
-const { default: Sidebar } = require("@/app/components/admin/Sidebar");
-const { default: Topbar } = require("@/app/components/admin/Topbar");
+import Sidebar from "@/app/components/admin/Sidebar";
+import Topbar from "@/app/components/admin/Topbar";
 
 
 export default function AdminLayout({ children }) {

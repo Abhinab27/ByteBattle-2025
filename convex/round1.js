@@ -19,7 +19,8 @@ export const submitRound1 = mutation({
       .first();
 
     const now = Date.now();
-    const cleared = score > 45;   // ⭐ AUTO CLEAR RULE
+    // 45% rule: if score is percentage (>= 45) or points out of 40 (>= 18)
+    const cleared = score >= 45 || score >= 18;
 
     if (!assessment) {
       // Insert new record

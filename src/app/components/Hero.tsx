@@ -449,7 +449,7 @@ function Hero() {
                       </summary>
                       <div className="px-6 pb-6 text-gray-300 leading-relaxed">
                         <div className="border-t border-red-500/20 pt-4">
-                          Byte Battle X NIT Silchar 2026 will be held from <span className="text-red-400 font-semibold">Jan 2026</span> at the NIT Silchar campus. The hackathon spans 48 hours of intensive coding, collaboration, and innovation.
+                          Byte Battle X NIT Silchar will kick off with Round 1 in <span className="text-red-400 font-semibold">Dec 2025</span>, Round 2 in <span className="text-red-400 font-semibold">Jan 2026</span>, and the 48-hour offline Grand Finale in <span className="text-red-400 font-semibold">Feb 2026</span> at the NIT Silchar campus.
                         </div>
                       </div>
                     </details>

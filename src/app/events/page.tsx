@@ -3,99 +3,106 @@
 import { useState } from "react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-import { useRouter } from "next/navigation";
-
+import Link from "next/link";
 import { SignedIn, SignedOut, SignInButton } from "@clerk/clerk-react";
 import { useQuery } from "convex/react";
 import { api } from "convex/_generated/api";
 import { GridBackground } from "../components/ui/grid-background";
+import { Calendar, ArrowRight, CheckCircle2, Clock, Sparkles } from "lucide-react";
 
 const events = [
   {
-    title: "Registration Opens",
-    date: "2025-11-1",
+    title: "Registration Portal Opens",
+    date: "2025-11-15",
     mode: "Online",
-    details: "Registration portal opens for Hackathon 2026.",
-    extra: ["All team leaders must register", "Max 4 members per team", "Free registration"],
-    requiresDate: false,
+    details: "Registration opens for ByteBattle NIT Silchar national hackathon.",
+    extra: [
+      "100% Free registration — no fee required",
+      "Teams of 3 members",
+      "Open to university and college students nationwide",
+    ],
     targetLabel: "Register Team",
     targetUrl: "/register",
   },
   {
-    title: "Hackathon 2026 Launch Meetup",
-    date: "2026-01-05",
+    title: "Hackathon Briefing & Launch Meetup",
+    date: "2025-12-05",
     mode: "Virtual",
-    details: "Kickoff session and event briefing",
-    extra: ["Event overview", "Q&A session", "Meet the organizers"],
-    requiresDate: true,
+    details: "Kickoff session, problem domain orientation, and event guidelines.",
+    extra: ["Event overview & rules", "Q&A with mentor panel", "Meet organizers & sponsors"],
     targetLabel: "Join Meetup",
     targetUrl: "/meetup",
   },
   {
-    title: "Online Assessment Round",
-    date: "2026-01-14",
+    title: "Round 1 — Online Screening Assessment",
+    date: "2025-12-15",
     mode: "Online Test",
-    details: "MCQ + coding screening test",
-    extra: ["MCQs", "Coding section", "40 minute duration"],
-    requiresDate: true,
-    targetLabel: "Start Test",
+    details: "20 randomized MCQs on programming, DSA, and problem solving. Scoring ≥ 45% qualifies for Round 2.",
+    extra: [
+      "20 randomized questions per team",
+      "30-minute timed assessment",
+      "Threshold: ≥ 45% correct answers to unlock Round 2",
+    ],
+    targetLabel: "Start Assessment",
     targetUrl: "/assessment",
   },
   {
-    title: "AI/ML Bootcamp",
-    date: "2026-01-16",
-    mode: "In-person",
-    details: "Hands-on sessions at NIT Silchar",
-    extra: ["Deep Learning", "ML Projects", "Career guidance"],
-    requiresDate: true,
-    targetLabel: "Join Bootcamp",
+    title: "AI/ML & Innovation Bootcamp",
+    date: "2025-12-28",
+    mode: "Virtual Workshop",
+    details: "Hands-on technical sessions covering AI/ML problem statements, architecture, and APIs.",
+    extra: ["AI/ML deep dive", "System design & cloud architecture", "Mentorship office hours"],
+    targetLabel: "Workshop Details",
     targetUrl: "/bootcamp",
   },
   {
-    title: "Team Networking Session",
-    date: "2026-01-30",
-    mode: "In-person",
-    details: "Meet other teams & share ideas",
-    extra: ["Ice breaking", "Idea exchange", "Team collaboration"],
-    requiresDate: true,
-    targetLabel: "Join Networking",
-    targetUrl: "/networking",
-  },
-  {
-    title: "Round 2 Submission Deadline",
-    date: "2026-02-06",
-    mode: "Online",
-    details: "Submit your project for Round 2 evaluation",
-    extra: ["Submit code", "Add documentation", "Upload demo"],
-    requiresDate: true,
+    title: "Round 2 — Project & Idea Submission Deadline",
+    date: "2026-01-20",
+    mode: "Online Submission",
+    details: "Qualified teams submit problem statements, architecture diagrams, GitHub repositories, and demo videos.",
+    extra: [
+      "Project description & problem statement",
+      "GitHub repository link",
+      "Working video demonstration URL",
+    ],
     targetLabel: "Submit Project",
     targetUrl: "/round2",
   },
   {
-    title: "Final Round — Hackathon 2026",
-    date: "2026-02-25",
-    mode: "On-Campus",
-    details: "Live finale & project presentations",
-    extra: ["48hr hackathon", "Judging round", "Final presentations"],
-    requiresDate: true,
-    targetLabel: "Join Final",
-    targetUrl: "/final",
+    title: "Round 2 Results & Finalist Announcements",
+    date: "2026-01-30",
+    mode: "Online Announcement",
+    details: "Jury evaluation concludes; top 10 finalist teams shortlisted for the on-campus grand finale.",
+    extra: [
+      "Top 10 finalist teams announced",
+      "Travel grant guidelines provided",
+      "Assigned mentor alignment for finals",
+    ],
+    targetLabel: "Check Status",
+    targetUrl: "/round2",
+  },
+  {
+    title: "Round 3 — On-Campus Grand Finale (NIT Silchar)",
+    date: "2026-02-20",
+    mode: "Offline • NIT Silchar Campus",
+    details: "48-hour live coding marathon, judge presentations, and ₹1,20,000+ cash award distribution.",
+    extra: [
+      "48-hour intense on-campus hackathon",
+      "Live presentation to industry jury",
+      "₹1,20,000+ total prizes & trophies",
+    ],
+    targetLabel: "Final Details",
+    targetUrl: "/prizes",
   },
 ];
 
 export default function EventsRoadmap() {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
-  const router = useRouter();
 
-  const myRegistration = useQuery(api.teamRegistrations.getMyRegistration);
+  const myRegistration = useQuery(api.teamRegistrations.getMyRegistration, {});
   const isRegistered = !!myRegistration;
 
   const round1Status = useQuery(
-    api.round1.getRound1Status,
-    myRegistration?._id ? { teamId: myRegistration._id } : "skip"
-  );
-
-  const assessment = useQuery(
     api.round1.getMyRound1,
     myRegistration?._id ? { teamId: myRegistration._id } : "skip"
   );
@@ -104,11 +111,6 @@ export default function EventsRoadmap() {
     api.round2.getRound2Status,
     myRegistration?._id ? { teamId: myRegistration._id } : "skip"
   );
-
-  const paymentStatus = myRegistration?.paymentStatus;
-  const isPaymentApproved = paymentStatus === "approved";
-  const isPaymentPending = paymentStatus === "pending";
-  const isPaymentRejected = paymentStatus === "rejected";
 
   const toggle = (idx: number) => {
     setOpenIndex(openIndex === idx ? null : idx);
@@ -119,268 +121,135 @@ export default function EventsRoadmap() {
       <GridBackground />
       <Navbar />
 
-      <div className="h-24 mt-32" />
-
-      <main className="grow px-6 pb-14">
+      <main className="grow px-6 pt-36 pb-20">
         <div className="max-w-5xl mx-auto">
-          <h1 className="text-4xl md:text-5xl font-bold mb-6">
-            Hackathon 2026 — Event Roadmap
-          </h1>
-          <p className="text-gray-400 mb-12">Timeline of all hackathon events</p>
+          {/* HEADER */}
+          <div className="text-center mb-16">
+            <span className="px-3.5 py-1 rounded-full bg-red-500/10 border border-red-500/30 text-red-300 text-xs font-semibold uppercase tracking-wider inline-block mb-3">
+              Official Hackathon Roadmap
+            </span>
+            <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight">
+              ByteBattle <span className="bg-gradient-to-r from-red-400 to-red-600 bg-clip-text text-transparent">2025–2026</span>
+            </h1>
+            <p className="text-gray-400 text-sm sm:text-base mt-2 max-w-xl mx-auto">
+              Follow your team&apos;s journey from screening to the NIT Silchar campus grand finale.
+            </p>
 
-          <div className="space-y-10 relative border-l border-gray-700 pl-6">
+            {isRegistered && (
+              <div className="inline-flex items-center gap-2 mt-4 px-4 py-2 rounded-xl bg-green-950/40 border border-green-500/40 text-green-300 text-xs font-semibold">
+                <CheckCircle2 size={16} />
+                Team &quot;{myRegistration.teamName}&quot; is registered (Free Entry Confirmed)
+              </div>
+            )}
+          </div>
+
+          {/* TIMELINE */}
+          <div className="space-y-8 relative border-l border-red-600/30 ml-4 sm:ml-8 pl-6 sm:pl-10">
             {events.map((ev, idx) => {
-              const isMeetup = ev.title === "Hackathon 2026 Launch Meetup";
-              const isAssessment = ev.title === "Online Assessment Round";
+              const isRound1 = ev.title.includes("Round 1");
+              const isRound2 = ev.title.includes("Round 2 — Project");
 
               return (
-                <div key={idx} className="relative">
-                  <div
-                    className="absolute -left-3.5 w-6 h-6 rounded-full bg-linear-to-r
-                    from-purple-500 to-blue-500 border border-gray-900 shadow-lg"
-                  />
+                <div key={idx} className="relative group">
+                  {/* Timeline bullet dot */}
+                  <div className="absolute -left-[31px] sm:-left-[47px] top-6 w-4 h-4 rounded-full bg-gradient-to-r from-red-500 to-red-600 border-2 border-black shadow-[0_0_12px_rgba(255,0,0,0.8)] group-hover:scale-125 transition-transform" />
 
-                  <div
-                    className="bg-gradient-to-br from-red-950/20 via-black/40 to-red-900/20 
-                    border border-red-500/30 rounded-3xl shadow-2xl shadow-red-500/10 
-                    overflow-hidden p-5 hover:border-red-500/60 transition"
-                  >
-                    <span
-                      className="text-xs px-2 py-1 rounded-md bg-gradient-to-r 
-                      from-red-400 to-red-600 bg-clip-text text-transparent"
-                    >
-                      {ev.mode}
-                    </span>
+                  <div className="bg-gradient-to-br from-red-950/30 via-black/60 to-red-950/20 border border-red-500/30 rounded-3xl p-6 shadow-xl hover:border-red-500/60 transition-all duration-300">
+                    <div className="flex flex-wrap items-center justify-between gap-3 mb-2">
+                      <span className="text-xs px-3 py-1 rounded-full bg-red-600/20 text-red-300 border border-red-500/30 font-semibold uppercase tracking-wider">
+                        {ev.mode}
+                      </span>
+                      <div className="flex items-center gap-1.5 text-xs text-white/50 font-mono">
+                        <Calendar size={13} className="text-red-400" />
+                        <span>{ev.date}</span>
+                      </div>
+                    </div>
 
-                    <h2 className="mt-2 text-lg font-semibold">{ev.title}</h2>
-                    <p className="text-gray-400 text-sm mt-1">🗓 {ev.date}</p>
-                    <p className="text-gray-300 text-sm mt-2">{ev.details}</p>
+                    <h2 className="text-xl sm:text-2xl font-bold text-white mt-2">
+                      {ev.title}
+                    </h2>
+                    <p className="text-gray-300 text-sm mt-2 leading-relaxed">
+                      {ev.details}
+                    </p>
 
-                    <button
-                      onClick={() => toggle(idx)}
-                      className="mt-3 inline-flex items-center gap-2 px-6 py-3 
-                      bg-gradient-to-r from-red-500/20 to-red-700/20 border border-red-500/40 
-                      rounded-lg text-red-200 hover:text-white hover:border-red-400/60 
-                      transition-all duration-300 hover:scale-105 text-xs font-medium"
-                    >
-                      {openIndex === idx ? "Hide Details" : "View Details"}
-                    </button>
+                    <div className="flex flex-wrap items-center gap-3 mt-4 pt-3 border-t border-white/5">
+                      <button
+                        onClick={() => toggle(idx)}
+                        className="px-4 py-2 bg-white/5 hover:bg-white/10 rounded-xl text-xs font-semibold text-white/70 hover:text-white transition cursor-pointer"
+                      >
+                        {openIndex === idx ? "Hide Details" : "View Details"}
+                      </button>
 
+                      {/* ROUND 1 ACTION */}
+                      {isRound1 && (
+                        isRegistered ? (
+                          round1Status?.attempted ? (
+                            round1Status.cleared ? (
+                              <span className="px-3 py-1.5 rounded-xl bg-green-500/20 text-green-300 border border-green-500/40 text-xs font-semibold flex items-center gap-1.5">
+                                <CheckCircle2 size={14} /> Round 1 Cleared (Score: {round1Status.score})
+                              </span>
+                            ) : (
+                              <span className="px-3 py-1.5 rounded-xl bg-red-500/20 text-red-300 border border-red-500/40 text-xs font-semibold">
+                                Round 1 Attempted (Score: {round1Status.score})
+                              </span>
+                            )
+                          ) : (
+                            <Link
+                              href={`/assesment/${myRegistration._id}`}
+                              className="px-5 py-2 rounded-xl bg-gradient-to-r from-red-600 to-red-500 hover:from-red-500 hover:to-red-600 text-white text-xs font-bold shadow-[0_0_15px_rgba(255,0,0,0.4)] flex items-center gap-1.5 transition hover:scale-105 cursor-pointer animate-pulse"
+                            >
+                              <span>Take Round 1 Test</span>
+                              <ArrowRight size={14} />
+                            </Link>
+                          )
+                        ) : (
+                          <Link
+                            href="/register"
+                            className="px-4 py-2 rounded-xl bg-red-600/20 text-red-300 border border-red-500/30 text-xs font-semibold hover:bg-red-600/30"
+                          >
+                            Register to Unlock
+                          </Link>
+                        )
+                      )}
+
+                      {/* ROUND 2 ACTION */}
+                      {isRound2 && (
+                        isRegistered ? (
+                          round1Status?.cleared ? (
+                            round2Status?.submitted ? (
+                              <span className="px-3 py-1.5 rounded-xl bg-green-500/20 text-green-300 border border-green-500/40 text-xs font-semibold flex items-center gap-1.5">
+                                <CheckCircle2 size={14} /> Project Submitted
+                              </span>
+                            ) : (
+                              <Link
+                                href="/round2"
+                                className="px-5 py-2 rounded-xl bg-gradient-to-r from-red-600 to-red-500 hover:from-red-500 hover:to-red-600 text-white text-xs font-bold shadow-[0_0_15px_rgba(255,0,0,0.4)] flex items-center gap-1.5 transition hover:scale-105"
+                              >
+                                <span>Submit Round 2 Project</span>
+                                <ArrowRight size={14} />
+                              </Link>
+                            )
+                          ) : (
+                            <span className="px-3 py-1.5 rounded-xl bg-white/5 text-white/40 border border-white/5 text-xs">
+                              Locked • Requires Round 1 clearance (≥45%)
+                            </span>
+                          )
+                        ) : null
+                      )}
+                    </div>
+
+                    {/* EXPANDABLE DETAILS */}
                     {openIndex === idx && (
-                      <>
-                        <hr className="border-red-500/20 my-4" />
-
-                        <ul className="space-y-2 text-sm text-gray-300">
+                      <div className="mt-4 pt-4 border-t border-red-500/20">
+                        <ul className="space-y-2 text-xs text-gray-300">
                           {ev.extra.map((point, i) => (
-                            <li key={i} className="flex items-start gap-2">
-                              <span className="text-red-400">•</span>
-                              {point}
+                            <li key={i} className="flex items-center gap-2">
+                              <span className="text-red-400 font-bold">•</span>
+                              <span>{point}</span>
                             </li>
                           ))}
                         </ul>
-
-                        {/* ------------------------- */}
-                        {/*   MERGED FUNCTIONALITY    */}
-                        {/* ------------------------- */}
-
-                        <div className="mt-4">
-
-                          {/* USER REGISTERED? */}
-                          {isRegistered ? (
-                            <>
-                              <button
-                                disabled
-                                className="bg-gray-600 px-4 py-2 rounded-md text-xs font-medium opacity-80 cursor-not-allowed mr-2"
-                              >
-                                ✔ Registered
-                              </button>
-
-                              {isPaymentPending && (
-                                <span className="bg-yellow-600/40 text-yellow-300 px-4 py-2 rounded-md text-xs font-medium">
-                                  ⏳ Payment Pending
-                                </span>
-                              )}
-
-                              {isPaymentRejected && (
-                                <span className="bg-red-600/40 text-red-300 px-4 py-2 rounded-md text-xs font-medium">
-                                  ❌ Payment Rejected — Contact Support
-                                </span>
-                              )}
-
-                              {/* PAYMENT APPROVED BLOCK */}
-                              {isPaymentApproved && (
-                                <>
-                                  {/* MEETUP */}
-                                  {isMeetup &&
-                                    (() => {
-                                      const [y, m, d] = ev.date.split("-").map(Number);
-                                      const start = new Date(y, m - 1, d, 18, 0, 0);
-                                      const end = new Date(y, m - 1, d, 23, 0, 0);
-                                      const now = new Date();
-
-                                      if (now < start)
-                                        return (
-                                          <span className="bg-yellow-600/40 text-yellow-300 px-4 py-2 rounded-md text-xs font-medium ml-2">
-                                            ⏳ Upcoming
-                                          </span>
-                                        );
-
-                                      if (now >= start && now <= end)
-                                        return (
-                                          <a
-                                            href="https://zoom.us/j/1234567890"
-                                            target="_blank"
-                                            className="text-green-400 underline animate-pulse ml-2"
-                                          >
-                                            Join Now
-                                          </a>
-                                        );
-
-                                      return (
-                                        <span className="bg-blue-600/40 text-blue-300 px-4 py-2 rounded-md text-xs font-medium ml-2">
-                                          ✔ Completed
-                                        </span>
-                                      );
-                                    })()}
-
-                                  {/* ASSESSMENT ROUND */}
-                                  {isAssessment &&
-                                    (() => {
-                                      if (round1Status?.attempted)
-                                        return (
-                                          <span className="bg-gray-500/40 text-gray-300 px-4 py-2 rounded-md text-xs font-medium ml-2">
-                                            ✔ Test Attempted
-                                          </span>
-                                        );
-
-                                      const [y, m, d] = ev.date.split("-").map(Number);
-                                      const start = new Date(y, m - 1, d, 20, 0, 0);
-                                      const end = new Date(y, m - 1, d, 21, 0, 0);
-                                      const now = new Date();
-
-                                      if (now < start)
-                                        return (
-                                          <span className="bg-yellow-600/40 text-yellow-300 px-4 py-2 rounded-md text-xs font-medium ml-2">
-                                            ⏳ Upcoming
-                                          </span>
-                                        );
-
-                                      if (now >= start && now <= end)
-                                        return (
-                                          <a
-                                            href={`/assesment/${myRegistration?._id}`}
-                                            className="text-green-400 underline animate-pulse ml-2"
-                                          >
-                                            Start Assessment
-                                          </a>
-                                        );
-
-                                      return (
-                                        <span className="bg-blue-600/40 text-blue-300 px-4 py-2 rounded-md text-xs font-medium ml-2">
-                                          ✔ Completed
-                                        </span>
-                                      );
-                                    })()}
-
-                                  {/* BOOTCAMP */}
-                                  {ev.title === "AI/ML Bootcamp" && (
-                                    assessment?.cleared ? (
-                                      <span className="bg-green-600/30 text-green-300 px-4 py-2 rounded-md text-xs font-medium ml-2">
-                                        ✔ Registered for Bootcamp
-                                      </span>
-                                    ) : (
-                                      <span className="bg-gray-500/40 text-gray-300 px-4 py-2 rounded-md text-xs font-medium ml-2">
-                                        ⛔ Requires clearing Round 1
-                                      </span>
-                                    )
-                                  )}
-
-                                  {/* NETWORKING */}
-                                  {ev.title === "Team Networking Session" && (
-                                    assessment?.cleared ? (
-                                      <span className="bg-green-600/30 text-green-300 px-4 py-2 rounded-md text-xs font-medium ml-2">
-                                        ✔ Registered for Networking
-                                      </span>
-                                    ) : (
-                                      <span className="bg-gray-500/40 text-gray-300 px-4 py-2 rounded-md text-xs font-medium ml-2">
-                                        ⛔ Requires clearing Round 1
-                                      </span>
-                                    )
-                                  )}
-
-                                  {/* ROUND 2 SUBMISSION */}
-                                  {ev.title === "Round 2 Submission Deadline" &&
-                                    (assessment?.cleared ? (
-                                      (() => {
-                                        const already = round2Status?.submitted;
-                                        const [y, m, d] = ev.date.split("-").map(Number);
-                                        const deadline = new Date(y, m - 1, d, 23, 59, 59);
-                                        const now = new Date();
-
-                                        if (now <= deadline)
-                                          return (
-                                            <a href="/round2">
-                                              <button className="bg-blue-600 px-4 py-2 rounded-md text-xs font-medium ml-2">
-                                                {already ? "Update Your Project" : "Submit Your Project"}
-                                              </button>
-                                            </a>
-                                          );
-
-                                        return (
-                                          <span className="bg-red-600/40 text-red-300 px-4 py-2 rounded-md text-xs font-medium ml-2">
-                                            ⛔ Submission Closed
-                                          </span>
-                                        );
-                                      })()
-                                    ) : (
-                                      <span className="bg-gray-500/40 text-gray-300 px-4 py-2 rounded-md text-xs font-medium ml-2">
-                                        ⛔ Requires clearing Round 1
-                                      </span>
-                                    ))}
-
-                                  {/* FINAL ROUND */}
-                                  {ev.title === "Final Round — Hackathon 2026" && (
-                                    round2Status?.cleared && assessment?.cleared ? (
-                                      <span className="bg-green-600/30 text-green-300 px-4 py-2 rounded-md text-xs font-medium ml-2">
-                                        ✔ Registered for Final Round
-                                      </span>
-                                    ) : (
-                                      <span className="bg-gray-500/40 text-gray-300 px-4 py-2 rounded-md text-xs font-medium ml-2">
-                                        ⛔ Requires clearing Round 2
-                                      </span>
-                                    )
-                                  )}
-                                </>
-                              )}
-                            </>
-                          ) : (
-                            <>
-                              {/* NOT REGISTERED */}
-                              {ev.title === "Registration Opens" ? (
-                                <>
-                                  <SignedOut>
-                                    <SignInButton mode="modal" forceRedirectUrl={ev.targetUrl}>
-                                      <button className="border border-white px-4 py-2 rounded-md text-xs font-medium hover:bg-white hover:text-black transition">
-                                        {ev.targetLabel}
-                                      </button>
-                                    </SignInButton>
-                                  </SignedOut>
-
-                                  <SignedIn>
-                                    <a href={ev.targetUrl}>
-                                      <button className="bg-green-600 px-4 py-2 rounded-md text-xs font-medium hover:bg-green-500 transition">
-                                        {ev.targetLabel}
-                                      </button>
-                                    </a>
-                                  </SignedIn>
-                                </>
-                              ) : (
-                                <></>
-                              )}
-                            </>
-                          )}
-                        </div>
-                      </>
+                      </div>
                     )}
                   </div>
                 </div>

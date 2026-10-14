@@ -9,7 +9,7 @@ import { api } from "../../../convex/_generated/api";
 import { GridBackground } from "../components/ui/grid-background";
 
 export default function Round2SubmitPage() {
-  const myReg = useQuery(api.teamRegistrations.getMyRegistration);
+  const myReg = useQuery(api.teamRegistrations.getMyRegistration, {});
   const teamId = myReg?._id;
 
   const assessment = useQuery(

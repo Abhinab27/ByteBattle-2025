@@ -17,19 +17,58 @@ export const createRegistration = mutation({
     member2Name: v.string(),
     member2Email: v.string(),
 
-    transactionId: v.string(), // required by schema
+    clerkUserId: v.optional(v.string()),
   },
 
   handler: async (ctx, args) => {
     const user = await ctx.auth.getUserIdentity();
-    if (!user) throw new Error("Unauthorized");
+    const leaderId = user?.subject || args.clerkUserId || args.leaderEmail;
 
     return await ctx.db.insert("teamRegistrations", {
-      ...args,
-      leaderId: user.subject,
+      teamName: args.teamName,
+      institution: args.institution,
+      leaderName: args.leaderName,
+      leaderEmail: args.leaderEmail,
+      member1Name: args.member1Name,
+      member1Email: args.member1Email,
+      member2Name: args.member2Name,
+      member2Email: args.member2Email,
+      leaderId,
       createdAt: Date.now(),
-      paymentStatus: "pending"
     });
+  },
+});
+
+/* ------------------------------------------- */
+/*  DELETE TEAM (Cascade Delete)                */
+/* ------------------------------------------- */
+export const deleteTeam = mutation({
+  args: {
+    teamId: v.id("teamRegistrations"),
+  },
+  handler: async (ctx, { teamId }) => {
+    // 1. Delete associated assessment(s) (wiping out attempt and score records)
+    const assessments = await ctx.db
+      .query("teamAssessments")
+      .withIndex("by_teamId", (q) => q.eq("teamId", teamId))
+      .collect();
+    for (const a of assessments) {
+      await ctx.db.delete(a._id);
+    }
+
+    // 2. Delete associated idea submissions
+    const submissions = await ctx.db
+      .query("teamIdeaSubmissions")
+      .withIndex("by_teamId", (q) => q.eq("teamId", teamId))
+      .collect();
+    for (const s of submissions) {
+      await ctx.db.delete(s._id);
+    }
+
+    // 3. Delete the team registration itself
+    await ctx.db.delete(teamId);
+
+    return { success: true };
   },
 });
 
@@ -37,14 +76,31 @@ export const createRegistration = mutation({
 /*  QUERY: GET LOGGED-IN USER'S REGISTRATION    */
 /* ------------------------------------------- */
 export const getMyRegistration = query({
-  handler: async (ctx) => {
+  args: {
+    clerkUserId: v.optional(v.string()),
+    email: v.optional(v.string()),
+  },
+  handler: async (ctx, args) => {
     const user = await ctx.auth.getUserIdentity();
-    if (!user) return null;
+    const leaderId = user?.subject || args?.clerkUserId;
 
-    return await ctx.db
-      .query("teamRegistrations")
-      .withIndex("by_leaderId", (q) => q.eq("leaderId", user.subject))
-      .unique();
+    if (leaderId) {
+      const byLeader = await ctx.db
+        .query("teamRegistrations")
+        .withIndex("by_leaderId", (q) => q.eq("leaderId", leaderId))
+        .first();
+      if (byLeader) return byLeader;
+    }
+
+    if (args?.email) {
+      const byEmail = await ctx.db
+        .query("teamRegistrations")
+        .withIndex("by_email", (q) => q.eq("leaderEmail", args.email))
+        .first();
+      if (byEmail) return byEmail;
+    }
+
+    return null;
   },
 });
 
@@ -98,43 +154,12 @@ export const isEmailUsed = query({
   },
 });
 
-
-
+/* ------------------------------------------- */
+/*  QUERY: GET ALL TEAMS                        */
+/* ------------------------------------------- */
 export const getAllTeams = query({
   handler: async (ctx) => {
     const teams = await ctx.db.query("teamRegistrations").collect();
     return teams.sort((a, b) => b.createdAt - a.createdAt); // newest first
   },
 });
-
-
-
-export const updatePaymentStatus = mutation({
-  args: {
-    teamId: v.id("teamRegistrations"),
-    status: v.string(), // "pending" | "approved" | "rejected"
-  },
-
-  handler: async (ctx, { teamId, status }) => {
-    await ctx.db.patch(teamId, {
-      paymentStatus: status,
-    });
-
-    return { success: true };
-  },
-});
-
-
-export const getPaymentStatus = query({
-  args: { teamId: v.id("teamRegistrations") },
-
-  handler: async (ctx, { teamId }) => {
-    const team = await ctx.db.get(teamId);
-    if (!team) return null;
-
-    return {
-      paymentStatus: team.paymentStatus,
-    };
-  },
-});
-

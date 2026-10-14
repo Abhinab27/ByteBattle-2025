@@ -13,9 +13,9 @@ Inspired by its motto *“Code, Compete, Conquer,”* the portal delivers a resp
 ## 🧭 Competition Rounds
 The ByteBattle hackathon unfolds in three stages ([Proposal PDF](https://drive.google.com/drive/folders/1qFbqZEvzw1q4-XNIMRS90bAOinRulvIZ?usp=drive_link)):
 
-- **Round 1 (Online – Jan 2026):** Screening quiz with MCQs and beginner coding.
-- **Round 2 (Online – Feb 2026):** Advanced problem-solving & AI/ML tasks.
-- **Round 3 (Offline – NIT Silchar):** Live coding hackathon with final presentations.
+- **Round 1 (Online – Dec 2025):** Screening quiz with 20 randomized MCQs (Score ≥ 45% qualifies for Round 2).
+- **Round 2 (Online – Jan 2026):** Project problem statement, GitHub repository & video demo submission.
+- **Round 3 (Offline – Feb 2026 @ NIT Silchar):** 48-hour live coding hackathon with final presentations and cash awards.
 
 ---
 

@@ -20,13 +20,9 @@ export default defineSchema({
     member2Name: v.string(),
     member2Email: v.string(),
 
-    transactionId: v.string(),
+    transactionId: v.optional(v.string()),
     createdAt: v.number(),
-    paymentStatus: v.union(
-      v.literal("pending"),
-      v.literal("approved"),
-      v.literal("rejected")
-    )
+    paymentStatus: v.optional(v.string()),
   })
     .index("by_leaderId", ["leaderId"])
     .index("by_email", ["leaderEmail"])
@@ -87,8 +83,21 @@ export default defineSchema({
     text: v.string(),
     options: v.array(v.string()),
     answer: v.string(),
-    qid: v.number(),
+    qid: v.optional(v.number()),
+    category: v.optional(v.string()),
     createdAt: v.number(),
   })
     .index("by_qid", ["qid"]),
+
+  // =======================
+  // ADMINS TABLE
+  // =======================
+  admins: defineTable({
+    email: v.string(),
+    name: v.optional(v.string()),
+    role: v.string(), // "superadmin" | "admin"
+    addedAt: v.number(),
+  })
+    .index("by_email", ["email"]),
 });
+

@@ -70,6 +70,7 @@ const Footer: React.FC = () => {
                 <li><a href="/" className="group flex items-center gap-2 text-gray-300 hover:text-red-400 transition-all">Home</a></li>
                 <li><a href="/about" className="group flex items-center gap-2 text-gray-300 hover:text-red-400 transition-all">About</a></li>
                 <li><a href="/contact" className="group flex items-center gap-2 text-gray-300 hover:text-red-400 transition-all">Contact</a></li>
+                <li><a href="/admin/login" className="group flex items-center gap-2 text-red-400/90 hover:text-red-300 transition-all font-medium">Admin Portal</a></li>
               </ul>
             </div>
 

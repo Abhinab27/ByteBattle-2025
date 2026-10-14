@@ -20,6 +20,7 @@
     "lucide-react": "^0.552.0",
     "motion": "^12.23.24",
     "next": "16.0.1",
+    "nodemailer": "^10.1.1",
     "react": "19.2.0",
     "react-dom": "19.2.0",
     "react-use-measure": "^2.1.7",
@@ -30,8 +31,10 @@
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
     "@types/node": "24.10.0",
+    "@types/nodemailer": "^8.0.2",
     "@types/react": "19.2.2",
     "babel-plugin-react-compiler": "1.0.0",
+    "baseline-browser-mapping": "^2.11.28",
     "eslint": "^9",
     "eslint-config-next": "16.0.1",
     "tailwindcss": "^4",

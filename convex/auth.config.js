@@ -1,7 +1,7 @@
 export default {
     providers : [
         {
-            domain : "https://ultimate-sailfish-78.clerk.accounts.dev",
+            domain : "https://relaxing-dolphin-9051.clerk.accounts.dev",
             applicationID : "convex"
         }
     ]

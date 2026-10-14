@@ -1,9 +1,8 @@
 // src/app/api/admin/login/route.js
 import { NextResponse } from "next/server";
-import { ADMIN_EMAILS } from "@/lib/admin";
+import { isAdminEmail } from "@/lib/admin";
 
 export async function POST(req) {
-  // safe parse
   let body;
   try {
     body = await req.json();
@@ -14,15 +13,23 @@ export async function POST(req) {
   const { email, password } = body ?? {};
 
   if (!email || !password) {
-    return NextResponse.json({ error: "Email and password required" }, { status: 400 });
+    return NextResponse.json({ error: "Email and password are required" }, { status: 400 });
   }
 
-  // NOTE: for now password is a static test value "admin123"
-  if (!ADMIN_EMAILS.includes(email) || password !== "admin123") {
-    return NextResponse.json({ error: "Invalid admin credentials" }, { status: 401 });
+  const normalizedEmail = email.trim().toLowerCase();
+  const expectedPassword = process.env.ADMIN_PASSWORD || "admin123";
+
+  // Check against admin list
+  const isAuthorized = isAdminEmail(normalizedEmail);
+
+  if (!isAuthorized || password !== expectedPassword) {
+    return NextResponse.json(
+      { error: "Invalid admin credentials. Please check your email or password." },
+      { status: 401 }
+    );
   }
 
-  const res = NextResponse.json({ success: true });
+  const res = NextResponse.json({ success: true, email: normalizedEmail });
 
   // Set cookie with known attributes that middleware will check
   res.cookies.set("admin-auth", "true", {

@@ -8,9 +8,11 @@
  * @module
  */
 
+import type * as admins from "../admins.js";
 import type * as countTeam from "../countTeam.js";
 import type * as email from "../email.js";
 import type * as files from "../files.js";
+import type * as questions from "../questions.js";
 import type * as round1 from "../round1.js";
 import type * as round2 from "../round2.js";
 import type * as teamRegistrations from "../teamRegistrations.js";
@@ -22,9 +24,11 @@ import type {
 } from "convex/server";
 
 declare const fullApi: ApiFromModules<{
+  admins: typeof admins;
   countTeam: typeof countTeam;
   email: typeof email;
   files: typeof files;
+  questions: typeof questions;
   round1: typeof round1;
   round2: typeof round2;
   teamRegistrations: typeof teamRegistrations;
