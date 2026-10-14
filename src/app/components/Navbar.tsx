@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { Menu, X, Shield } from "lucide-react";
 import ByteBattleLogo from "./ui/ByteBattleLogo";
 import { SignInButton, SignOutButton, UserButton } from "@clerk/clerk-react";
-import { Spinner } from "components/spinner";
+import { Spinner } from "../../../components/spinner";
 import { useConvexAuth } from "convex/react";
 import { SignedIn, SignedOut } from "@clerk/clerk-react";
 

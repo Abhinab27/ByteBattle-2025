@@ -6,7 +6,7 @@ import Footer from "../components/Footer";
 import Link from "next/link";
 import { SignedIn, SignedOut, SignInButton } from "@clerk/clerk-react";
 import { useQuery } from "convex/react";
-import { api } from "convex/_generated/api";
+import { api } from "../../../convex/_generated/api";
 import { GridBackground } from "../components/ui/grid-background";
 import { Calendar, ArrowRight, CheckCircle2, Clock, Sparkles } from "lucide-react";
 

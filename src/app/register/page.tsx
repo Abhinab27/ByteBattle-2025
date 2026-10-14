@@ -6,8 +6,8 @@ import Footer from "../components/Footer";
 import { useConvexAuth, useQuery, useMutation } from "convex/react";
 import { useRouter } from "next/navigation";
 import { useUser, SignInButton } from "@clerk/clerk-react";
-import { Spinner } from "components/spinner";
-import { api } from "convex/_generated/api";
+import { Spinner } from "../../../components/spinner";
+import { api } from "../../../convex/_generated/api";
 import { GridBackground } from "../components/ui/grid-background";
 import { CheckCircle2, Sparkles, LogIn } from "lucide-react";
 
